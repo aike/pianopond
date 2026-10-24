@@ -1,0 +1,205 @@
+:root {
+  --bg: #0f1419;
+  --panel: #182028;
+  --text: #e8eef4;
+  --muted: #90a4ae;
+  --accent: #4fc3f7;
+  --danger: #ef5350;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: #0a0e12;
+  border-bottom: 1px solid #263238;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+header nav { display: flex; gap: 6px; }
+
+.status {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.status.ok { color: #69f0ae; }
+.status.ng { color: #ffab91; }
+
+main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: auto; }
+#screen-play.active { overflow: hidden; }
+
+.panel {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px 24px 32px;
+}
+
+h2 { font-size: 18px; margin: 18px 0 8px; color: var(--muted); }
+
+button {
+  background: #263238;
+  color: var(--text);
+  border: 1px solid #37474f;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover { background: #324450; }
+button.primary { background: #0277bd; border-color: #0288d1; }
+button.primary:hover { background: #0288d1; }
+button.danger { border-color: var(--danger); color: #ffab91; }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: var(--panel);
+  border-radius: 8px;
+}
+label.inline { flex-direction: row; align-items: center; gap: 8px; font-size: 15px; color: var(--text); }
+.toolbar select { font-size: 15px; }
+
+.chart-list { list-style: none; padding: 0; margin: 0; }
+
+.chart-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background: var(--panel);
+  border-radius: 8px;
+}
+
+.chart-info { flex: 1; }
+.chart-info strong { display: block; }
+.chart-info .meta { font-size: 12px; color: var(--muted); }
+.chart-actions { display: flex; gap: 6px; }
+
+.hint { font-size: 13px; color: var(--muted); }
+
+.banner {
+  margin: 16px 0 8px;
+  padding: 12px 16px;
+  border: 1px solid #ff8a65;
+  border-radius: 8px;
+  background: #2b1d18;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.banner strong { color: #ffab91; }
+.banner-steps { margin: 8px 0; color: var(--text); }
+.banner button { margin-top: 4px; }
+
+/* プレイ画面 */
+#hud {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  padding: 8px 20px;
+  background: #0a0e12;
+  border-bottom: 1px solid #263238;
+}
+
+.hud-block { min-width: 140px; }
+.hud-block.right { margin-left: auto; text-align: right; font-size: 18px; }
+.hud-block .label { font-size: 12px; color: var(--muted); }
+.hud-block .small { font-size: 13px; color: var(--muted); }
+.chord-now { font-size: 40px; font-weight: bold; line-height: 1.1; color: #fff; }
+.chord-next { font-size: 26px; font-weight: bold; color: var(--muted); }
+.notes { font-size: 13px; color: var(--accent); }
+
+#lanes { flex: 1; min-height: 0; width: 100%; display: block; }
+
+#play-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  background: #0a0e12;
+}
+
+#play-footer button { margin-left: auto; }
+
+/* リザルト */
+.result { text-align: center; }
+.rank { font-size: 96px; font-weight: bold; color: #ffd54f; line-height: 1; margin: 8px 0 16px; }
+.result-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 6px 24px;
+  justify-content: center;
+  font-size: 18px;
+}
+.result-grid > :nth-child(odd) { text-align: right; color: var(--muted); }
+.result-grid > :nth-child(even) { text-align: left; font-weight: bold; }
+.actions { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+
+/* エディタ・設定 */
+.form-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.form-col { display: flex; flex-direction: column; gap: 14px; }
+label { font-size: 14px; color: var(--muted); display: inline-flex; flex-direction: column; gap: 4px; }
+label.block { display: flex; width: 100%; }
+.form-col label { flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap; }
+.form-col label > :first-child { min-width: 0; }
+.form-col .hint { width: 100%; }
+.midi-info { margin: 0; font-family: ui-monospace, Consolas, monospace; white-space: pre-wrap; line-height: 1.5; }
+.midi-monitor { width: 100%; padding: 8px 10px; background: #0a0e12; border: 1px solid #37474f; border-radius: 6px; color: #69f0ae; font-size: 13px; }
+
+input[type="text"], input[type="number"], select, textarea {
+  background: #0a0e12;
+  color: var(--text);
+  border: 1px solid #37474f;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+textarea { width: 100%; font-family: ui-monospace, Consolas, monospace; font-size: 15px; line-height: 1.5; resize: vertical; }
+input[type="number"] { width: 90px; }
+input[type="range"] { width: 200px; }
+
+.error { color: #ff8a80; min-height: 1.4em; font-size: 14px; margin-top: 6px; white-space: pre-wrap; }
+.message { color: #69f0ae; min-height: 1.4em; font-size: 14px; }
+.help { margin-top: 16px; font-size: 13px; color: var(--muted); }
+.help code { background: #0a0e12; padding: 1px 5px; border-radius: 4px; color: var(--accent); }
+.help li { margin: 4px 0; }

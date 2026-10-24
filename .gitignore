@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node(依存パッケージは使っていないが、入れた場合に備えて)
+node_modules/
+npm-debug.log*
+
+# Python の簡易サーバーが作ることがあるファイル
+__pycache__/
+
+# ログ・一時ファイル
+*.log
+*.tmp
+.cache/
+dist/

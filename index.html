@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PianoPond</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>PianoPond</h1>
+  <nav>
+    <button data-screen="select">曲選択</button>
+    <button data-screen="editor">譜面エディタ</button>
+    <button data-screen="settings">設定</button>
+  </nav>
+  <div id="midi-status" class="status">MIDI: 初期化中...</div>
+</header>
+
+<main>
+  <section id="screen-select" class="screen active">
+    <div class="panel">
+      <div id="midi-banner" class="banner" hidden>
+        <strong>MIDI 機器が使えません。</strong>
+        <span id="midi-banner-text"></span>
+        <div class="banner-steps">
+          このサイトの MIDI がブラウザでブロックされています。Chrome / Edge では次の手順で許可してください。<br>
+          1. アドレスバー左のアイコン(鍵または設定マーク)をクリック → 「サイトの設定」<br>
+          2. 「MIDI デバイス」を「許可」にする<br>
+          3. このページを再読み込みする<br>
+          または chrome://settings/content/midiDevices を開き、ブロック一覧からこのサイトを削除します。
+        </div>
+        <button id="midi-banner-retry">もう一度 MIDI を要求する</button>
+      </div>
+      <div class="toolbar">
+        <label class="inline">テンポ
+          <select id="tempo-select"></select>
+        </label>
+        <span id="tempo-note" class="hint"></span>
+      </div>
+      <h2>内蔵譜面</h2>
+      <ul id="builtin-list" class="chart-list"></ul>
+      <h2>自作譜面</h2>
+      <ul id="user-list" class="chart-list"></ul>
+      <p id="user-empty" class="hint">まだありません。「譜面エディタ」から作れます。</p>
+      <p class="hint">MIDI 鍵盤がない時は PC キーボードでも弾けます: Z 行が下のオクターブ(Z=ド、S=ド#、X=レ ...)、Q 行が上のオクターブ。</p>
+    </div>
+  </section>
+
+  <section id="screen-play" class="screen">
+    <div id="hud">
+      <div class="hud-block">
+        <div class="label">いま弾く</div>
+        <div id="hud-current" class="chord-now">-</div>
+        <div id="hud-current-notes" class="notes">&nbsp;</div>
+      </div>
+      <div class="hud-block">
+        <div class="label">つぎ</div>
+        <div id="hud-next" class="chord-next">-</div>
+      </div>
+      <div class="hud-block right">
+        <div>SCORE <span id="hud-score">0</span></div>
+        <div>COMBO <span id="hud-combo">0</span></div>
+        <div class="small"><span id="hud-counts">P 0 / G 0 / M 0</span></div>
+      </div>
+    </div>
+    <canvas id="lanes"></canvas>
+    <div id="play-footer">
+      <span id="play-title"></span>
+      <button id="btn-quit">やめる (Esc)</button>
+    </div>
+  </section>
+
+  <section id="screen-result" class="screen">
+    <div class="panel result">
+      <h2 id="result-title"></h2>
+      <div id="result-rank" class="rank">A</div>
+      <div class="result-grid">
+        <div>テンポ</div><div id="result-tempo"></div>
+        <div>スコア</div><div id="result-score"></div>
+        <div>精度</div><div id="result-accuracy"></div>
+        <div>PERFECT</div><div id="result-perfect"></div>
+        <div>GOOD</div><div id="result-good"></div>
+        <div>MISS</div><div id="result-miss"></div>
+        <div>最大コンボ</div><div id="result-combo"></div>
+      </div>
+      <div class="actions">
+        <button id="btn-retry" class="primary">もう一度</button>
+        <button id="btn-result-back">戻る</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-editor" class="screen">
+    <div class="panel">
+      <h2>譜面エディタ</h2>
+      <div class="form-row">
+        <label>タイトル <input id="ed-title" type="text" placeholder="マイ進行"></label>
+        <label>BPM <input id="ed-bpm" type="number" min="30" max="300" value="120"></label>
+        <label>拍子
+          <select id="ed-bpb">
+            <option value="4">4/4</option>
+            <option value="3">3/4</option>
+            <option value="2">2/4</option>
+            <option value="5">5/4</option>
+            <option value="6">6/4</option>
+          </select>
+        </label>
+        <label>リズム <select id="ed-rhythm"></select></label>
+      </div>
+      <label class="block">コード進行
+        <textarea id="ed-prog" rows="8" spellcheck="false" placeholder="C | Am | F | G"></textarea>
+      </label>
+      <div id="ed-error" class="error"></div>
+      <div id="ed-message" class="message"></div>
+      <div class="actions">
+        <button id="ed-test" class="primary">試奏</button>
+        <button id="ed-save">保存</button>
+        <button id="ed-new">新規</button>
+        <button id="ed-export">JSON 書き出し</button>
+        <button id="ed-import">JSON 読み込み</button>
+        <input id="ed-import-file" type="file" accept="application/json,.json" hidden>
+        <button id="ed-delete" class="danger">削除</button>
+      </div>
+      <details class="help">
+        <summary>書き方</summary>
+        <ul>
+          <li>小節は <code>|</code> または改行で区切ります。小節内に複数のコードを空白で並べると拍を等分します。例: <code>Dm7 G7</code></li>
+          <li>拍数を明示するには <code>Am:2</code> のように書きます。</li>
+          <li><code>%</code> は直前のコードの繰り返しです。<code>//</code> から行末はコメントです。</li>
+          <li>対応コード: C, Cm, C7, Cmaj7, Cm7, Cdim, Cm7b5, Caug, Csus4, Csus2, C6, Cm6, Cadd9, C9, Cm9, C7b9, C/E(分数コード)など。</li>
+          <li>押す鍵は「左手: ベース 1 音(C3〜B3)+ 右手: コードの密集和音(C5 まで)」の形で自動的に決まります。</li>
+          <li>押す鍵を固定したい時は <code>F[53,57,60]</code> のように MIDI ノート番号(C3=48)を書きます。一番低い音が左手のベースになります。</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <section id="screen-settings" class="screen">
+    <div class="panel">
+      <h2>設定</h2>
+      <div class="form-col">
+        <label>MIDI 入力
+          <select id="set-midi"></select>
+          <button id="set-midi-refresh">再検索</button>
+          <pre id="set-midi-info" class="hint midi-info"></pre>
+          <span class="hint">受信モニタ(鍵盤を押すと更新されます):</span>
+          <pre id="set-midi-monitor" class="midi-info midi-monitor"></pre>
+        </label>
+        <label>鍵盤の最低音
+          <select id="set-base">
+            <option value="36">C2 (MIDI 36)</option>
+            <option value="48">C3 (MIDI 48)</option>
+            <option value="60">C4 (MIDI 60)</option>
+          </select>
+          <span class="hint">お使いの鍵盤の一番左のドを選びます。わからなければ一番左のドを押すと表示されます: <strong id="set-last-note">-</strong></span>
+        </label>
+        <label>判定オフセット (ms)
+          <input id="set-offset" type="number" step="5" min="-300" max="300">
+          <span class="hint">いつも「早い」と出るなら負の値、「遅い」と出るなら正の値にします。</span>
+        </label>
+        <label>ノート落下速度 <input id="set-speed" type="range" min="150" max="700" step="10"> <span id="set-speed-val"></span></label>
+        <label>ピアノ音量 <input id="set-piano" type="range" min="0" max="1" step="0.05"> <span id="set-piano-val"></span></label>
+        <label>伴奏音量 <input id="set-accomp" type="range" min="0" max="1" step="0.05"> <span id="set-accomp-val"></span></label>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
