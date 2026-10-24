@@ -203,3 +203,8 @@ input[type="range"] { width: 200px; }
 .help { margin-top: 16px; font-size: 13px; color: var(--muted); }
 .help code { background: #0a0e12; padding: 1px 5px; border-radius: 4px; color: var(--accent); }
 .help li { margin: 4px 0; }
+
+/* 設定画面の末尾の小さなクレジット */
+.about { margin-top: 40px; font-size: 12px; color: #607d8b; }
+.about a { color: inherit; text-decoration: underline; }
+.about a:hover { color: var(--accent); }
