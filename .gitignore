@@ -21,3 +21,7 @@ __pycache__/
 *.tmp
 .cache/
 dist/
+
+# 自作譜面
+myscore/
+

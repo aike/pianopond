@@ -14,7 +14,7 @@ export const RHYTHMS = {
   },
   '8beat': {
     label: '8ビート', stepsPerBeat: 4,
-    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'X.x.X.x.X.x.X.x.', bass: 'r.r.r.r.5.5.r.r.',
+    kick: 'x.....x...x.....', snare: '....x.......x...', hat: 'X.x.X.x.X.x.X.x.', bass: 'r.r.r.r.r.r.r.r.',
   },
   '16beat': {
     label: '16ビート', stepsPerBeat: 4,
